@@ -1,17 +1,5 @@
 data "aws_region" "current" {}
 
-module "ecr" {
-  source  = "cloudposse/ecr/aws"
-  version = "0.34.0"
-  enabled = var.codepipeline_enabled
-
-  attributes           = ["ecr"]
-  scan_images_on_push  = var.ecr_scan_images_on_push
-  image_tag_mutability = var.ecr_image_tag_mutability
-
-  context = module.this.context
-}
-
 resource "aws_cloudwatch_log_group" "app" {
   count = var.cloudwatch_log_group_enabled ? 1 : 0
 

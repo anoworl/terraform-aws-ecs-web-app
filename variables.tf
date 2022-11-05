@@ -1,33 +1,3 @@
-variable "region" {
-  type        = string
-  description = "AWS Region for S3 bucket"
-  default     = null
-}
-
-variable "codepipeline_enabled" {
-  type        = bool
-  description = "A boolean to enable/disable AWS Codepipeline and ECR"
-  default     = true
-}
-
-variable "codepipeline_cdn_bucket_id" {
-  type        = string
-  default     = null
-  description = "Optional bucket for static asset deployment. If specified, the buildspec must include a secondary artifacts section which controls the files deployed to the bucket [For more info](http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html)"
-}
-
-variable "codepipeline_cdn_bucket_encryption_enabled" {
-  type        = bool
-  default     = false
-  description = "If set to true, enable encryption on the optional CDN asset deployment bucket"
-}
-
-variable "codepipeline_cdn_bucket_buildspec_identifier" {
-  type        = string
-  default     = null
-  description = "Identifier for buildspec section controlling the optional CDN asset deployment."
-}
-
 variable "use_ecr_image" {
   type        = bool
   description = "If true, use ECR repo URL for image, otherwise use value in container_image"
@@ -701,18 +671,6 @@ variable "ecs_private_subnet_ids" {
   description = "List of Private Subnet IDs to provision ECS Service onto if `var.network_mode = \"awsvpc\"`"
 }
 
-variable "github_oauth_token" {
-  type        = string
-  description = "GitHub Oauth Token with permissions to access private repositories"
-  default     = ""
-}
-
-variable "github_webhooks_token" {
-  type        = string
-  description = "GitHub OAuth Token with permissions to create webhooks. If not provided, can be sourced from the `GITHUB_TOKEN` environment variable"
-  default     = ""
-}
-
 variable "permissions_boundary" {
   type        = string
   description = "A permissions boundary ARN to apply to the 3 roles that are created."
@@ -727,66 +685,6 @@ variable "runtime_platform" {
     See `runtime_platform` docs https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition#runtime_platform
     EOT
   default     = []
-}
-
-variable "github_webhook_events" {
-  type        = list(string)
-  description = "A list of events which should trigger the webhook. See a list of [available events](https://developer.github.com/v3/activity/events/types/)"
-  default     = ["push"]
-}
-
-variable "repo_owner" {
-  type        = string
-  description = "GitHub Organization or Username"
-  default     = ""
-}
-
-variable "repo_name" {
-  type        = string
-  description = "GitHub repository name of the application to be built and deployed to ECS"
-  default     = ""
-}
-
-variable "branch" {
-  type        = string
-  description = "Branch of the GitHub repository, e.g. `master`"
-  default     = ""
-}
-
-variable "badge_enabled" {
-  type        = bool
-  default     = false
-  description = "Generates a publicly-accessible URL for the projects build badge. Available as badge_url attribute when enabled"
-}
-
-variable "build_image" {
-  type        = string
-  default     = "aws/codebuild/docker:17.09.0"
-  description = "Docker image for build environment, _e.g._ `aws/codebuild/docker:docker:17.09.0`"
-}
-
-variable "build_environment_variables" {
-  type = list(object(
-    {
-      name  = string
-      value = string
-      type  = string
-  }))
-
-  default     = []
-  description = "A list of maps, that contain the keys 'name', 'value', and 'type' to be used as additional environment variables for the build. Valid types are 'PLAINTEXT', 'PARAMETER_STORE', or 'SECRETS_MANAGER'"
-}
-
-variable "build_timeout" {
-  type        = number
-  default     = 60
-  description = "How long in minutes, from 5 to 480 (8 hours), for AWS CodeBuild to wait until timing out any related build that does not get marked as completed"
-}
-
-variable "buildspec" {
-  type        = string
-  description = "Declaration to use for building the project. [For more info](http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html)"
-  default     = ""
 }
 
 variable "autoscaling_enabled" {
@@ -837,64 +735,16 @@ variable "autoscaling_scale_down_cooldown" {
   default     = 300
 }
 
-variable "poll_source_changes" {
-  type        = bool
-  default     = false
-  description = "Periodically check the location of your source content and run the pipeline if changes are detected"
-}
-
-variable "webhook_enabled" {
-  type        = bool
-  description = "Set to false to prevent the module from creating any webhook resources"
-  default     = true
-}
-
-variable "webhook_target_action" {
-  type        = string
-  description = "The name of the action in a pipeline you want to connect to the webhook. The action must be from the source (first) stage of the pipeline"
-  default     = "Source"
-}
-
-variable "webhook_authentication" {
-  type        = string
-  description = "The type of authentication to use. One of IP, GITHUB_HMAC, or UNAUTHENTICATED"
-  default     = "GITHUB_HMAC"
-}
-
-variable "webhook_filter_json_path" {
-  type        = string
-  description = "The JSON path to filter on"
-  default     = "$.ref"
-}
-
-variable "webhook_filter_match_equals" {
-  type        = string
-  description = "The value to match on (e.g. refs/heads/{Branch})"
-  default     = "refs/heads/{Branch}"
-}
-
 variable "alb_ingress_unauthenticated_listener_arns" {
   type        = list(string)
   description = "A list of unauthenticated ALB listener ARNs to attach ALB listener rules to"
   default     = []
 }
 
-variable "alb_ingress_unauthenticated_listener_arns_count" {
-  type        = number
-  description = "The number of unauthenticated ARNs in `alb_ingress_unauthenticated_listener_arns`. This is necessary to work around a limitation in Terraform where counts cannot be computed"
-  default     = 0
-}
-
 variable "alb_ingress_authenticated_listener_arns" {
   type        = list(string)
   description = "A list of authenticated ALB listener ARNs to attach ALB listener rules to"
   default     = []
-}
-
-variable "alb_ingress_authenticated_listener_arns_count" {
-  type        = number
-  description = "The number of authenticated ARNs in `alb_ingress_authenticated_listener_arns`. This is necessary to work around a limitation in Terraform where counts cannot be computed"
-  default     = 0
 }
 
 variable "authentication_type" {
@@ -967,30 +817,6 @@ variable "authentication_oidc_scope" {
   type        = string
   description = "OIDC scope, which should be a space separated string of requested scopes (see https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims, and https://developers.google.com/identity/protocols/oauth2/openid-connect#scope-param for an example set of scopes when using Google as the IdP)"
   default     = null
-}
-
-variable "codepipeline_build_cache_bucket_suffix_enabled" {
-  type        = bool
-  description = "The codebuild cache bucket generates a random 13 character string to generate a unique bucket name. If set to false it uses terraform-null-label's id value. It only works when cache_type is 'S3'"
-  default     = true
-}
-
-variable "codepipeline_build_compute_type" {
-  type        = string
-  default     = "BUILD_GENERAL1_SMALL"
-  description = "`CodeBuild` instance size. Possible values are: `BUILD_GENERAL1_SMALL` `BUILD_GENERAL1_MEDIUM` `BUILD_GENERAL1_LARGE`"
-}
-
-variable "codepipeline_s3_bucket_force_destroy" {
-  type        = bool
-  description = "A boolean that indicates all objects should be deleted from the CodePipeline artifact store S3 bucket so that the bucket can be destroyed without error"
-  default     = false
-}
-
-variable "codebuild_cache_type" {
-  type        = string
-  description = "The type of storage that will be used for the AWS CodeBuild project cache. Valid values: NO_CACHE, LOCAL, and S3.  Defaults to NO_CACHE.  If cache_type is S3, it will create an S3 bucket for storing codebuild cache inside"
-  default     = "S3"
 }
 
 variable "init_containers" {

@@ -1,33 +1,3 @@
-output "ecr" {
-  value       = module.ecr
-  description = "All outputs from `module.ecr`"
-}
-
-output "ecr_registry_id" {
-  value       = module.ecr.registry_id
-  description = "Registry ID"
-}
-
-output "ecr_registry_url" {
-  value       = module.ecr.repository_url
-  description = "Repository URL"
-}
-
-output "ecr_repository_url" {
-  value       = module.ecr.repository_url
-  description = "Repository URL"
-}
-
-output "ecr_repository_name" {
-  value       = module.ecr.repository_name
-  description = "Registry name"
-}
-
-output "ecr_repository_arn" {
-  value       = module.ecr.repository_arn
-  description = "ARN of ECR repository"
-}
-
 output "alb_ingress" {
   description = "All outputs from `module.alb_ingress`"
   value       = module.alb_ingress
